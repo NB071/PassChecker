@@ -198,6 +198,30 @@ class PassChecker:
             self.reason = f"Password entropy is too low: {entropy:.2f} (threshold: {threshold})"
             return False
         
+    
+    def __isSequential(self, max_sequence: int) -> bool:
+        """
+        Check if the password contains sequential characters.
+
+        This method checks if the password contains a sequence of characters
+        that are either incrementing or decrementing by 1. The length of the
+        sequence to check for is determined by the `max_sequence` parameter.
+
+        Args:
+            max_sequence (int): The length of the sequence to check for.
+
+        Returns:
+            bool: True if the password contains a sequential sequence of characters, False otherwise.
+        """
+        
+        password_values = [ord(c) for c in self.password]
+        for i in range(len(password_values) - max_sequence + 1):
+            sequence = password_values[i:i + max_sequence]
+            if sequence == list(range(sequence[0], sequence[0] + max_sequence)) or \
+                sequence == list(range(sequence[0], sequence[0] - max_sequence, -1)):
+                self.reason = f"Password contains sequential characters: {''.join(map(chr, sequence))}"
+                return True
+        return False
     # [END] Private Helper methods
     
     # [START] Private Leveling methods
