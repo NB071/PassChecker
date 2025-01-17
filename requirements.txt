@@ -1,0 +1,7 @@
+re
+requests==2.31.0
+json
+math
+typing-extensions
+hashlib
+argparse
