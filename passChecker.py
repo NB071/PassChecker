@@ -319,6 +319,36 @@ class PassChecker:
         
         return False
     
+    def __level5(self) -> bool:
+        """
+        Checks if the password meets the criteria for level 5 security.
+        Level 5 security criteria:
+        - Password must be at least MIN_LENGTH_LEVEL_5 characters long.
+        - Password must not be repetitive beyond the REPETITIVE_CHAR_THRESHOLD_LEVEL_5.
+        - Password must have high entropy above the ENTROPY_THRESHOLD_LEVEL_5.
+        - Password must not be sequential beyond the SEQUENTIAL_CHAR_THRESHOLD_LEVEL_5.
+        - Password must not contain the username (if entered).
+        If all criteria are met, increments the security points and returns True.
+        Otherwise, sets the reason for failure and returns False.
+        Returns:
+            bool: True if the password meets level 5 security criteria, False otherwise.
+        """
+        
+        if len(self.password) < self.PASSWORD_MIN_LENGTH_LEVEL_5:
+            self.reason = "Password is short (less than 14 characters)"
+            return False
+        
+        if (
+            not self.__isRepetitive(self.REPETITIVE_CHAR_THRESHOLD_LEVEL_5) and
+            self.__hasHighEntropy(self.ENTROPY_THRESHOLD_LEVEL_5) and
+            not self.__isSequential(self.SEQUENTIAL_CHAR_THRESHOLD_LEVEL_5) and
+            not self.__containsUsername()
+        ):
+            self.__incrementPoint()
+            return True
+        
+        return False
+    
     # [END] Private Leveling methods
     
     # [START] Public methods
