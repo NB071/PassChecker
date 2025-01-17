@@ -1,2 +1,2 @@
 # PassChecker
-Password Checker written Python inspired by NIST
+Password Checker written in Python inspired by NIST
