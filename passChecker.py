@@ -105,6 +105,33 @@ class PassChecker:
                 self.reason = f"Password contains repetitive substring: {substring} ({count} occurrences)"
                 return True
         return False
+    
+    def __isPalindrome(self) -> bool:
+        """
+        Check if the password is a palindrome.
+        A palindrome is a string that reads the same forward and backward.
+
+        Returns:
+            bool: True if the password is a palindrome, False otherwise.
+        """
+        
+        if self.password == self.password[::-1]:
+            self.reason = "Password is a palindrome"
+            return True
+        return False 
+    
+    def __containsUsername(self) -> bool:
+        """
+        Checks if the password contains the username.
+
+        Returns:
+            bool: True if the password contains the username, False otherwise.
+        """
+        
+        if self.username and self.username in self.password:
+            self.reason = "Password contains username"
+            return True
+        return False
         
     # [END] Private Helper methods
     
