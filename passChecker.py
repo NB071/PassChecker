@@ -132,6 +132,71 @@ class PassChecker:
             self.reason = "Password contains username"
             return True
         return False
+    
+    def __passwordsPWNED(self) -> bool:
+        """
+        Checks if the password has been pwned using the Have I Been Pwned API.
+        This method hashes the password using SHA-1, splits the hash into a prefix and suffix,
+        and queries the Have I Been Pwned API to check if the password has been compromised.
+        Returns:
+            bool: True if the password has been pwned, False otherwise.
+        Raises:
+            KeyError: If the API key is not found or invalid.
+            requests.exceptions.RequestException: If there is an issue with the API request.
+            json.JSONDecodeError: If there is an issue decoding the JSON configuration file.
+        """
+        
+        sha1_hash = hashlib.sha1(self.password.encode()).hexdigest().upper()
+        prefix, suffix = sha1_hash[:5], sha1_hash[5:]
+        url = f"{self.HIBP_API_URL}/{prefix}"
+        
+        try:
+            # Load API key from the configuration file
+            with open(self.CONFIG_FILE_NAME, "r") as file:
+                api_key = json.load(file).get("HIBP_API_KEY")
+            if not api_key:
+                raise KeyError("API key not found or invalid.")
+
+            # Query the Have I Been Pwned API
+            response = requests.get(url, headers={self.HIBP_HEADER: api_key})
+            response.raise_for_status()
+            
+            for line in response.text.splitlines():
+                hash_suffix, count = line.split(":")
+                if hash_suffix == suffix:
+                    self.reason = f"Password has been pwned {count} times"
+                    return True
+            return False
+        except (requests.exceptions.RequestException, json.JSONDecodeError, KeyError) as e:
+            print(f"Error: {e}")
+            return False
+
+    def __hasHighEntropy(self, threshold: float) -> bool:
+        """
+        Check if the password has high entropy.
+        This method calculates the entropy of the password based on the 
+        Shannon entropy formula. It determines if the entropy exceeds 
+        a given threshold.
+        Args:
+            threshold (float): The entropy threshold to compare against. 
+            
+        Returns:
+            bool: True if the password entropy is higher than the threshold, 
+                False otherwise. If False, sets the reason attribute with 
+                an explanation.
+        """
+        
+        unique_chars = set(self.password)
+        entropy = 0.0
+        for char in unique_chars:
+            Px = self.password.count(char) / len(self.password)
+            entropy -= Px * math.log2(Px)
+        
+        if entropy > threshold:
+            return True
+        else:
+            self.reason = f"Password entropy is too low: {entropy:.2f} (threshold: {threshold})"
+            return False
         
     # [END] Private Helper methods
     
