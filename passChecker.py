@@ -222,9 +222,50 @@ class PassChecker:
                 self.reason = f"Password contains sequential characters: {''.join(map(chr, sequence))}"
                 return True
         return False
+    
     # [END] Private Helper methods
     
     # [START] Private Leveling methods
+    
+    def __level1(self) -> bool:
+        """
+        Checks if the password meets the criteria for level 1 security.
+
+        The criteria for level 1 security are:
+        - The password length must be greater than or equal to MIN_LENGTH_LEVEL_1.
+
+        If the password meets this criterion, the method increments the point counter and returns True.
+        Otherwise, it returns False.
+
+        Returns:
+            bool: True if the password meets level 1 security criteria, False otherwise.
+        """
+        
+        if len(self.password) >= self.PASSWORD_MIN_LENGTH_LEVEL_1:
+            self.__incrementPoint()
+            return True
+        return False
+    
+    def __level2(self) -> bool:
+        """
+        Checks if the password meets the criteria for level 2 security.
+
+        The criteria for level 2 security are:
+        - The password length must be greater than or equal to MIN_LENGTH_LEVEL_2.
+        - The password must match at least REGEX_PATTERN_REQUIREMENT_LEVEL_2 patterns from REGEXES_PATTERNS.
+
+        If the password meets these criteria, the method increments the point counter and returns True.
+        Otherwise, it sets the reason attribute to indicate the failure and returns False.
+
+        Returns:
+            bool: True if the password meets level 2 security criteria, False otherwise.
+        """
+        
+        if len(self.password) >= self.PASSWORD_MIN_LENGTH_LEVEL_2 and sum(bool(re.search(pattern, self.password)) for pattern in self.REGEXES_PATTERNS) >= self.REGEX_PATTERN_REQUIREMENT_LEVEL_2:
+            self.__incrementPoint()
+            return True
+        self.reason = "Password is too short or does not contain enough character types (uppercase, lowercase, digits, special characters)"        
+        return False
     
     # [END] Private Leveling methods
     
