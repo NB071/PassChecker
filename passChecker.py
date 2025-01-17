@@ -267,6 +267,58 @@ class PassChecker:
         self.reason = "Password is too short or does not contain enough character types (uppercase, lowercase, digits, special characters)"        
         return False
     
+    def __level3(self) -> bool:
+        """
+        Checks if the password meets the criteria for level 3 security.
+        The criteria for level 3 security are:
+        - The password length must be greater than or equal to MIN_LENGTH_LEVEL_3.
+        - The password must match at least REGEX_PATTERN_REQUIREMENT_LEVEL_3 patterns from REGEXES_PATTERNS.
+        If the password meets these criteria, the method increments the security points and returns True.
+        Otherwise, it sets the reason for failure and returns False.
+        Returns:
+            bool: True if the password meets level 3 security criteria, False otherwise.
+        """
+        
+        if len(self.password) >= self.PASSWORD_MIN_LENGTH_LEVEL_3 and sum(
+            bool(re.search(pattern, self.password)) for pattern in self.REGEXES_PATTERNS
+        ) >= self.REGEX_PATTERN_REQUIREMENT_LEVEL_3:
+            self.__incrementPoint()
+            return True
+        
+        self.reason = "Password is too short or does not contain enough character types (uppercase, lowercase, digits, special characters)"
+        return False
+    
+    def __level4(self) -> bool:
+        """
+        Checks if the password meets the criteria for level 4 security.
+        Level 4 security criteria:
+        - Password length must be greater than or equal to MIN_LENGTH_LEVEL_4.
+        - Password must contain at least one uppercase letter, one lowercase letter, one digit, and one special character.
+        - Password must not be found in the PWNED passwords database.
+        - Password must not be a palindrome.
+        - Password must not contain repetitive characters exceeding the REPETITIVE_CHAR_THRESHOLD_LEVEL_4.
+        - Password must not contain sequential characters exceeding the SEQUENTIAL_CHAR_THRESHOLD_LEVEL_4.
+        Returns:
+            bool: True if the password meets all level 4 criteria, False otherwise.
+        """
+        
+        if not len(self.password) >= self.PASSWORD_MIN_LENGTH_LEVEL_4:
+            self.reason = "Password is short or does not contain enough character types (uppercase, lowercase, digits, special characters)"
+            return False
+        if (
+            all(re.search(pattern, self.password) for pattern in self.REGEXES_PATTERNS) and
+            not any([
+            self.__passwordsPWNED(),
+            self.__isPalindrome(),
+            self.__isRepetitive(self.REPETITIVE_CHAR_THRESHOLD_LEVEL_4),
+            self.__isSequential(self.SEQUENTIAL_CHAR_THRESHOLD_LEVEL_4)
+            ])
+        ):
+            self.__incrementPoint()
+            return True
+        
+        return False
+    
     # [END] Private Leveling methods
     
     # [START] Public methods
