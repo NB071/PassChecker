@@ -382,3 +382,17 @@ def main():
     args = parser.parse_args()
     
     tool = PassChecker(args.password, args.username)
+    
+    tool = PassChecker(args.password, args.username)
+    result = tool.assess()
+    
+    print(
+        f"Password: {args.password}\n"
+        f"Username: {args.username if args.username else 'N/A'}\n"
+        f"Level: {result['level']}\n"
+        f"Title: {result['title']}\n"
+        f"Reason: {result['reason']}"
+    )
+    
+if __name__ == "__main__":
+    main()
