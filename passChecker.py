@@ -42,6 +42,24 @@ class PassChecker:
     
     ENTROPY_THRESHOLD_LEVEL_5 = 3.55
     
+    def __init__(self, password: str, username: str = None):
+        """
+        Initialize a new instance of the PassChecker class.
+        Args:
+            password (str): The password to be checked. Must not be empty.
+            username (str, optional): The username associated with the password. Defaults to None.
+        Raises:
+            ValueError: If the password is empty.
+        """
+        
+        if not password:
+            raise ValueError("Password cannot be empty.")
+        
+        self.password = password
+        self.username = username
+        self.point = 0
+        self.reason = ""
+    
 def main():
     parser = argparse.ArgumentParser(description="PassChecker: Password Evaluation Tool")
     parser.add_argument("-p", "--password", type=str, help="[Required] Password to evaluate", required=True)
