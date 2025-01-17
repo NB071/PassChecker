@@ -353,6 +353,25 @@ class PassChecker:
     
     # [START] Public methods
     
+    def assess(self) -> dict:
+        """
+        Assess the strength of the password based on various criteria.
+        
+        Returns:
+            dict: A dictionary containing the assessment level, title, and reason.
+        """
+        levels = [self.__level1, self.__level2, self.__level3, self.__level4, self.__level5]
+        
+        for level in levels:
+            if not level():
+                break
+        
+        return {
+            "level": f"{self.point} / {len(self.PASSWORD_STRENGTH_LEVELS) - 1}",
+            "title": self.PASSWORD_STRENGTH_LEVELS[self.point],
+            "reason": self.reason if self.reason else "N/A"
+        }
+    
     # [END] Public methods
     
 def main():
