@@ -1,5 +1,9 @@
 # PassChecker: Advanced Password Evaluation Tool
 
+<div align="center">
+   <img src="https://i.ibb.co/593fXMP/Pass-1.png" width="450" height="450" />
+
+</div>
 
 ## Overview
 **PassChecker** is a Python-based tool designed to evaluate the strength of a password and identify potential weaknesses. The tool incorporates multiple levels of password strength evaluation, including length checks, character diversity, entropy analysis, detection of repetitive or sequential patterns, and integration with the "Have I Been Pwned" (HIBP) API for breach detection.
