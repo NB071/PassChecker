@@ -59,6 +59,62 @@ class PassChecker:
         self.username = username
         self.point = 0
         self.reason = ""
+        
+    # [START] Private Helper methods
+        
+    def __incrementPoint(self) -> None:
+        """
+        Increments the point attribute by 1.
+        """
+        
+        self.point += 1
+        
+    def __isRepetitive(self, threshold: int) -> bool:
+        """
+        Check if the password is repetitive based on given threshold.
+        This method checks if the password contains repetitive patterns that 
+        make it weak. It performs the following checks:
+        1. If the password consists of only one character.
+        2. If the password contains joined repetitive characters.
+        3. If the password contains sparse repetitive substrings.
+        Args:
+            threshold (int): The threshold for considering a substring as repetitive. 
+            
+        Returns:
+            bool: True if the password is considered repetitive, False otherwise.
+        """
+        
+        if len(set(self.password)) == 1:
+            self.reason = "Password contains only one character"
+            return True
+        
+        match = re.search(r"(.{2,})\1+", self.password)
+        if match and len(self.password) // len(match.group(1)) >= threshold:
+            self.reason = "Password contains joined repetitive characters"
+            return True
+
+        substrings = {
+            self.password[i:j]
+            for i in range(len(self.password))
+            for j in range(i + 2, len(self.password) + 1)
+        }       
+        
+        for substring in substrings:
+            count = len(re.findall(re.escape(substring), self.password))
+            if count >= threshold:
+                self.reason = f"Password contains repetitive substring: {substring} ({count} occurrences)"
+                return True
+        return False
+        
+    # [END] Private Helper methods
+    
+    # [START] Private Leveling methods
+    
+    # [END] Private Leveling methods
+    
+    # [START] Public methods
+    
+    # [END] Public methods
     
 def main():
     parser = argparse.ArgumentParser(description="PassChecker: Password Evaluation Tool")
